@@ -1,0 +1,41 @@
+
+<a href="/">
+  <div id="header">
+    <h1>Catalog App</h1>
+
+	  {% if not isLoggedIn %}
+
+		<div id="button_area" style="position:absolute; left:80%; top:3%">
+
+		<form action="/login" method="get">
+    			<input type="submit" value="   Login   " name="login" id="frm1_login" />
+		</form>
+
+		<form action="/user/register" method="get">
+    			<input type="submit" value="Register" name="register" id="frm1_register" />
+		</form>
+
+		</div>
+
+
+	{% else %}
+
+		<div id="button_area" style="position:absolute; left:80%; top:7%">
+
+		<form action="/user/logout" method="get">
+    			<input type="submit" value="   Logout   " name="logout" id="frm1_logout" />
+		</form>
+
+		</div>
+    {% endif %}
+
+  </div>
+</a>
+
+
+
+
+	<!-- <div id="button_area" style="position:absolute; left:90%; top:7%">  -->
+
+	   <!-- <input id="login_button" type="button" value="LoginX" onclick="window.location='/login'"/>  -->
+          <!-- <input type="button" onclick=""> Login</button>  ="location.href='/login'"  -->

@@ -1,0 +1,24 @@
+<html>
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<div id="nav">
+</div>
+
+<div id="section">
+  <h2>{{item.name}} ({{item.category.name}})</h2>
+
+	<p>Description:</p>
+	<div id="descr" style="width:150%">
+		{{item.description}}
+	</div>
+</div>
+
+{% include 'footer.html' %}
+
+</body>
+</html>

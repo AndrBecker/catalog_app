@@ -1,0 +1,41 @@
+<html>
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+
+<div id="nav">
+
+  {% if isAdmin %}
+    <p><a href="{{url_for('newCategory')}}">Add Category</a></p>
+  {% endif %}
+
+  <h2>Categories</h2>
+  {% for category in categories %}
+    <p><a href="{{url_for('listItem', category_id=category.id)}}">{{category.name}}</a></p>
+
+    {% if isAdmin %}
+	<a href="{{url_for('editCategory', category_id=category.id)}}">Edit</a> | 
+	<a href="{{url_for('deleteCategory', category_id=category.id)}}">Delete</a>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<div id="section">
+
+  <p><a href="{{url_for('newItem')}}">Add Item</a></p>
+
+  <h2>{{itemHeading}}</h2>
+  {% for item in items %}
+    <p><a href="{{url_for('showItem', item_id=item.id)}}">{{item.name}} ({{item.category.name}})</a></p>
+  {% endfor %}
+</div>
+
+
+{% include 'footer.html' %}
+
+</body>
+</html>

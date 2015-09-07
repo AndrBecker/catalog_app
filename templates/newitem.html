@@ -1,0 +1,42 @@
+<html>
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<div id="nav">
+</div>
+
+<div id="section">
+  <h2>New Item</h2>
+
+  <form action="{{url_for('newItem')}}" method = 'POST'>
+
+    <p>Name:</p>
+    <input type='text' size='30' name='name'>
+
+    <p>Description:</p>
+    <textarea name="description" rows="8" cols="80" style='height:100px; width:600px;'></textarea>
+
+    <p>Category:</p>
+    <select name="category_id">
+    {% for category in categories %}
+      <option value="{{category.id}}">{{category.name}}</option>
+    {% endfor %}
+    </select>
+
+    </br>
+    </br>
+    <input type='submit' value='Create'>
+
+    <a href="{{url_for('listCategory')}}">   Cancel</a>
+
+  </form>
+</div>
+
+{% include 'footer.html' %}
+
+</body>
+</html>

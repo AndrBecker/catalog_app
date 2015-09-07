@@ -1,0 +1,38 @@
+<html>
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<div id="nav">
+</div>
+
+<div id="section">
+  <h2>Register</h2>
+
+  <form action="{{ url_for('register') }}" method=post>
+
+    <p>User name</p>
+    <input type='text' size='30' name='username'>
+
+    <p>Password</p>
+    <input type=password name=password>
+
+    </br>
+    </br>
+    <input type='submit' value='Register'>
+
+    </br>
+    </br>
+    <a href="{{url_for('listCategory')}}">Cancel</a>
+
+  </form>
+
+</div>
+
+{% include 'footer.html' %}
+
+</body>
+</html>
