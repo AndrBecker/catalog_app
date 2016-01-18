@@ -7,6 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from database_setup import Base, Category, Item, Role, User
 import random
 import string
+import hashlib
 
 # imports for oauth-handling
 from oauth2client.client import flow_from_clientsecrets
@@ -503,7 +504,12 @@ def login():
 
                 # user found (no exception)
                 # check password
-                if user.password != request.form['password']:
+
+		m = hashlib.md5()
+		m.update(request.form['password'])
+		md5Passwd = m.hexdigest()
+
+                if user.password != md5Passwd:
                     flash('wrong password for user ' + username)
                 else:
                     # password correct
@@ -571,10 +577,15 @@ def register():
                 user = session.query(User).filter_by(name=userName).one()
             except NoResultFound, e:
                 # username not used yet -> may be used
+
+		m = hashlib.md5()
+		m.update(request.form['password'])
+		md5Passwd = m.hexdigest()
+
                 role = session.query(Role).filter_by(name="standard").one()
                 newUser = User(
                     name=userName,
-                    password=request.form['password'],
+                    password=md5Passwd,
                     role=role,
                     created_at=datetime.now())
                 session.add(newUser)
@@ -640,6 +651,8 @@ def showItemJSON(item_id):
 
 @app.route('/user/JSON')
 def listUserJSON():
+    if not isLoggedInAdmin():
+	return "authorization as admin user required"
     users = session.query(User).all()
     return jsonify(Users=[u.serialize for u in users])
 
@@ -647,6 +660,8 @@ def listUserJSON():
 # USER JSON
 @app.route('/user/<int:user_id>/JSON')
 def userJSON(user_id):
+    if not isLoggedInAdmin():
+	return "authorization as admin user required"
     user = session.query(User).filter_by(
         id=user_id).one()
     return jsonify(Users=[user.serialize])
