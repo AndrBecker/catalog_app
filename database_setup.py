@@ -28,7 +28,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(100), nullable=False)
     password = Column(String(50))
-    gplus_id = Column(String(20))
+    gplus_id = Column(String(50))
     email = Column(String(30))
     created_at = Column(DateTime, nullable=False)
     role_id = Column(Integer, ForeignKey('role.id'), nullable=False)

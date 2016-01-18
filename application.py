@@ -116,7 +116,10 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
-    login_session['credentials'] = credentials
+    if stored_credentials is not None:
+        del login_session['credentials']
+
+    login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -140,7 +143,7 @@ def gconnect():
     # Find user among registered users
 
     try:
-        user = session.query(User).filter_by(gplus_id=gplus_id).one()
+        user = session.query(User).filter_by(gplus_id=str(gplus_id)).one()
 
         # user found (no exception)
 
@@ -164,7 +167,7 @@ def gconnect():
         roleStandard = session.query(Role).filter_by(name="standard").one()
         newUser = User(
             name=login_session['username'],
-            gplus_id=login_session['gplus_id'],
+            gplus_id=str(login_session['gplus_id']),
             email=loginEmail,
             role=roleStandard,
             created_at=datetime.now())
@@ -175,19 +178,20 @@ def gconnect():
         flash("you were registered as new user and are logged in")
 
     flash("you are now logged in as %s" % login_session['username'])
-    return ''
+    response = make_response(json.dumps('Successfully connected.'), 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 @app.route('/gdisconnect')
 def gdisconnect():
-        # Only disconnect a connected user.
-    credentials = login_session.get('credentials')
-    if credentials is None:
+    # Only disconnect a connected user.
+    access_token = login_session.get('credentials')
+    if access_token is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    access_token = credentials.access_token
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -200,6 +204,10 @@ def gdisconnect():
         del login_session['picture']
         if 'email' in login_session:
             del login_session['email']
+        if 'given_name' in login_session:
+            del login_session['given_name']
+        if 'family_name' in login_session:
+            del login_session['family_name']
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
@@ -268,7 +276,7 @@ def newCategory():
                     newCategory = Category(
                         name=request.form['name'],
                         description=request.form['description'],
-                        creator_id=('user_id' in login_session),
+                        creator_id=login_session['user_id'],
                         created_at=datetime.now())
                     session.add(newCategory)
                     session.commit()
@@ -332,7 +340,7 @@ def deleteCategory(category_id):
         flash("category deleted")
         return redirect(url_for('listCategory'))
     else:
-        return render_template('deleteCategory.html',
+        return render_template('deletecategory.html',
                                category=category,
                                isLoggedIn=isLoggedIn())
 
